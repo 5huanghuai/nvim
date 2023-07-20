@@ -15,7 +15,7 @@ return{
 		    -- optional
             "hrsh7th/cmp-emoji",
           "hrsh7th/cmp-nvim-lsp-signature-help",
-                "ray-x/cmp-treesitter",
+        "ray-x/cmp-treesitter",
         },
         config = function()
       local cmp = require("cmp")
