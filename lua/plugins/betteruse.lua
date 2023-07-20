@@ -4,20 +4,28 @@ return{
 --  |                      better comment                      |
 --  +----------------------------------------------------------+
 
+
+{ "JoosepAlviste/nvim-ts-context-commentstring", lazy = true }, --  don't know the effect
+
 -- mini comment
-{ 'echasnovski/mini.nvim', 
-version = false,
-event = "VeryLazy",
-    opts = {
-      hooks = {
-        pre = function()
-          require("ts_context_commentstring.internal").update_commentstring({})
-        end,
-      },
-    },
-    config = function(_, opts)
-      require("mini.comment").setup(opts)
-    end,
+{ 
+    'echasnovski/mini.nvim', 
+    version = false,
+    event = "VeryLazy",
+--    opts = {
+--      hooks = {
+--        pre = function()
+--          require("ts_context_commentstring.internal").update_commentstring({})
+--        end,
+--      },
+--    },
+--    config = function(_, opts)
+--      require("mini.comment").setup(opts)
+--    end,
+config =function()
+    require("mini.comment").setup()
+end
+
 },
 
 -- create box and line
@@ -61,7 +69,7 @@ event = "VeryLazy",
 -- better jump
 {
   "folke/flash.nvim",
-  event = "VeryLazy",
+  -- event = "VeryLazy",
   ---@type Flash.Config
   opts = {},
   -- stylua: ignore

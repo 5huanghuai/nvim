@@ -1,28 +1,6 @@
 return{
---  +----------------------------------------------------------+
---  |                        indentline                        |
---  +----------------------------------------------------------+
-{
-"echasnovski/mini.indentscope",
-version = false,
--- event = "BufReadPre",
--- event = "BufReadPost",
-event = "VeryLazy",
-opts = {
-options = { try_as_border = true },
-},
-config = function(_,opts)
-    require("mini.indentscope").setup( opts  )
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "help", "alpha", "dashboard", "neo-tree", "Trouble", "lazy", "mason" },
-        callback = function()
-            vim.b.miniindentscope_disable = true
-        end,
-    })
-end,
-},                           
 
-            
+
 --  +------------------------------------------------------------------------------+
 --  |                           Beautifull notification                            |
 --  +------------------------------------------------------------------------------+
@@ -106,14 +84,14 @@ end,
   },
 
 
-    -- make theme transparent
+--     -- make theme transparent
     {
         "xiyaowong/transparent.nvim",
         keys = {
             { "<leader>tt", "<cmd>TransparentToggle<cr>", mode = { "i", "n", "s" },desc = "TransparentToggle" },
         },
         config =function()
-        
+
         require("transparent").setup({
           groups = { -- table: default groups
             'Normal', 'NormalNC', 'Comment', 'Constant', 'Special', 'Identifier',
@@ -129,9 +107,9 @@ end,
         })
         end
     },
-
-
-	-- theme
+--
+--
+	-- theme1
 	{
 		"RRethy/nvim-base16",
 		lazy = false, -- make sure we load this during startup if it is your main colorscheme
@@ -148,10 +126,23 @@ end,
 		end,
 	},
 
-	--status line
+-- -- 	-- theme2
+--     { "catppuccin/nvim", name = "catppuccin", priority = 1000,
+--
+--     config =function()
+--     require("catppuccin").setup({
+--
+--      flavour = "mocha", -- latte, frappe, macchiato, mocha
+--          transparent_background = false, -- disables setting the background color.
+--     })
+--
+--     end
+-- },
+--
+-- 	--status line
 	{
 		"ojroques/nvim-hardline",
-		lazy = false, -- make sure we load this during startup if it is your main colorscheme
+		--lazy = false, -- make sure we load this during startup if it is your main colorscheme
 		priority = 1000, -- make sure to load this before all the other start plugins
 		config = function()
 			require("hardline").setup({
@@ -186,19 +177,86 @@ end,
 			})
 		end,
 	},
+--
+--
+-- --  +------------------------------------------------------------------------------+
+--   --  |                                  Dashboard                                   |
+--   --  +------------------------------------------------------------------------------+
 
 
---  +------------------------------------------------------------------------------+
-  --  |                                  Dashboard                                   |
-  --  +------------------------------------------------------------------------------+
-  {
-    "goolord/alpha-nvim",
+-- {
+--     "goolord/alpha-nvim",
+--     event = "VimEnter",
+--     opts = function()
+--       local dashboard = require("alpha.themes.dashboard")
+--       local logo = require("util.logo")["random"]
+--       dashboard.section.header.val = vim.split(logo, "\n")
+--       dashboard.section.buttons.val = {
+--         dashboard.button("f", " " .. " Find file", ":Telescope find_files <CR>"),
+--         dashboard.button("n", " " .. " New file", ":ene <BAR> startinsert <CR>"),
+--         -- dashboard.button("r", " " .. " Recent files", ":Telescope frecency <CR>"),
+--         -- dashboard.button("g", " " .. " Grep text", ":Telescope live_grep <CR>"),
+--         -- dashboard.button("u", "鈴" .. " Update plugins", ":Lazy update<CR>"),
+--         -- dashboard.button("c", " " .. " Config NeoVim", ":e $MYVIMRC <CR>"),
+--         dashboard.button("q", " " .. " Quit", ":qa<CR>"),
+--       }
+--       for _, button in ipairs(dashboard.section.buttons.val) do
+--         button.opts.hl = "AlphaButtons"
+--         button.opts.hl_shortcut = "AlphaShortcut"
+--       end
+--       dashboard.section.footer.opts.hl = "Type"
+--       dashboard.section.header.opts.hl = "AlphaHeader"
+--       dashboard.section.buttons.opts.hl = "AlphaButtons"
+--       dashboard.opts.layout[1].val = 8
+--       return dashboard
+--     end,
+--     config = function(_, dashboard)
+--       vim.b.miniindentscope_disable = true
+--
+--       -- close Lazy and re-open when the dashboard is ready
+--       if vim.o.filetype == "lazy" then
+--         vim.cmd.close()
+--         vim.api.nvim_create_autocmd("User", {
+--           pattern = "AlphaReady",
+--           callback = function()
+--             require("lazy").show()
+--           end,
+--         })
+--       end
+--
+--       require("alpha").setup(dashboard.opts)
+--
+--       vim.api.nvim_create_autocmd("User", {
+--         pattern = "LazyVimStarted",
+--         callback = function()
+--           local stats = require("lazy").stats()
+--           local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
+--
+--           local version = " v" .. vim.version().major .. "." .. vim.version().minor .. "." .. vim.version().patch
+--           local plugins = "⚡Neovim loaded " .. stats.count .. " plugins in " .. ms .. "ms"
+--           local footer = "\t" .. version .. "\t" .. plugins
+--           dashboard.section.footer.val = footer
+--           pcall(vim.cmd.AlphaRedraw)
+--         end,
+--       })
+--     end,
+--   },
+--
+ 
+--
+{
+    'goolord/alpha-nvim',
     event = "VimEnter",
-    opts = function()
-      local dashboard = require("alpha.themes.dashboard")
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+    local alpha = require("alpha")
+    local dashboard = require("alpha.themes.dashboard")
+-- Set header
       local logo = require("util.logo")["random"]
       dashboard.section.header.val = vim.split(logo, "\n")
-      dashboard.section.buttons.val = {
+-- Set menu
+dashboard.section.buttons.val = {
+
         dashboard.button("f", " " .. " Find file", ":Telescope find_files <CR>"),
         dashboard.button("n", " " .. " New file", ":ene <BAR> startinsert <CR>"),
         -- dashboard.button("r", " " .. " Recent files", ":Telescope frecency <CR>"),
@@ -206,21 +264,26 @@ end,
         -- dashboard.button("u", "鈴" .. " Update plugins", ":Lazy update<CR>"),
         -- dashboard.button("c", " " .. " Config NeoVim", ":e $MYVIMRC <CR>"),
         dashboard.button("q", " " .. " Quit", ":qa<CR>"),
-      }
-      for _, button in ipairs(dashboard.section.buttons.val) do
-        button.opts.hl = "AlphaButtons"
-        button.opts.hl_shortcut = "AlphaShortcut"
-      end
-      dashboard.section.footer.opts.hl = "Type"
-      dashboard.section.header.opts.hl = "AlphaHeader"
-      dashboard.section.buttons.opts.hl = "AlphaButtons"
-      dashboard.opts.layout[1].val = 8
-      return dashboard
-    end,
-    config = function(_, dashboard)
-      vim.b.miniindentscope_disable = true
+    -- dashboard.button( "e", "  > New file" , ":ene <BAR> startinsert <CR>"),
+    -- dashboard.button( "f", "  > Find file", ":cd $HOME/Workspace | Telescope find_files<CR>"),
+    -- dashboard.button( "r", "  > Recent"   , ":Telescope oldfiles<CR>"),
+    -- dashboard.button( "s", "  > Settings" , ":e $MYVIMRC | :cd %:p:h | split . | wincmd k | pwd<CR>"),
+    -- dashboard.button( "q", "  > Quit NVIM", ":qa<CR>"),
+}
+--   for _, button in ipairs(dashboard.section.buttons.val) do
+--     button.opts.hl = "AlphaButtons"
+--     button.opts.hl_shortcut = "AlphaShortcut"
+--   end
+--   dashboard.section.footer.opts.hl = "Type"
+--   dashboard.section.header.opts.hl = "AlphaHeader"
+--   dashboard.section.buttons.opts.hl = "AlphaButtons"
+--   dashboard.opts.layout[1].val = 8
+--   return dashboard
+-- end
+-- Send config to alpha
+alpha.setup(dashboard.opts)
 
-      -- close Lazy and re-open when the dashboard is ready
+     -- close Lazy and re-open when the dashboard is ready
       if vim.o.filetype == "lazy" then
         vim.cmd.close()
         vim.api.nvim_create_autocmd("User", {
@@ -231,7 +294,12 @@ end,
         })
       end
 
-      require("alpha").setup(dashboard.opts)
+
+-- Disable folding on alpha buffer
+vim.cmd([[
+    autocmd FileType alpha setlocal nofoldenable
+]])
+
 
       vim.api.nvim_create_autocmd("User", {
         pattern = "LazyVimStarted",
@@ -246,8 +314,32 @@ end,
           pcall(vim.cmd.AlphaRedraw)
         end,
       })
-    end,
-  },
+
+    end
+},
+--  +----------------------------------------------------------+
+--  |                        indentline                        |
+--  +----------------------------------------------------------+
+{
+"echasnovski/mini.indentscope",
+version = false,
+event = "BufReadPre",
+-- event = "BufReadPost",
+-- event = "VeryLazy",
+opts = {
+options = { try_as_border = true },
+},
+config = function(_,opts)
+    require("mini.indentscope").setup( opts  )
+    vim.api.nvim_create_autocmd("FileType", {
+        --TODO: in neovim alpha,this plugin still work, next try to disable this plugin in the aplha
+        pattern = { "help", "alpha", "dashboard", "neo-tree", "Trouble", "lazy", "mason" },
+        callback = function()
+            vim.b.miniindentscope_disable = true
+        end,
+    })
+end,
+},
 
 
-}
+ }
