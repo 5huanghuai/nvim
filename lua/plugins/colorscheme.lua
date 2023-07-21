@@ -48,15 +48,7 @@ return {
     --     vim.cmd[[colorscheme nord]]
     --     end
     -- },
-
-    -- {
-    --     "sainnhe/sonokai",
-    --     lazy=false,
-    --     config=function ()
-    --
-    --         vim.cmd[[colorscheme sonokai]]
-    --     end,
-    -- },
+    --theme4
     {
         "luisiacc/gruvbox-baby",
         lazy = false,
@@ -67,13 +59,38 @@ return {
             vim.cmd [[colorscheme gruvbox-baby]]
         end,
     },
-
+    --theme5
+    -- {
+    --     "rebelot/kanagawa.nvim",
+    --     lazy = false,
+    --     compile = true,
+    --     priority = 1000,
+    --     opts = {
+    --         overrides = function()
+    --             local palette = require("kanagawa.colors").setup().palette
+    --             return {
+    --                 WinSeparator = { fg = "NONE" },
+    --                 TelescopeBorder = { fg = palette.sumiInk0, bg = palette.sumiInk0 },
+    --                 TelescopeNormal = { fg = palette.fujiWhite, bg = palette.sumiInk0 },
+    --                 TelescopePromptBorder = { fg = palette.sumiInk4, bg = palette.sumiInk4 },
+    --                 TelescopePromptNormal = { fg = palette.fujiWhite, bg = palette.sumiInk4 },
+    --                 TelescopeSelection = { fg = palette.fujiWhite, bg = palette.sumiInk4 },
+    --                 TelescopePreviewTitle = { fg = palette.sumiInk4, bg = palette.oniViolet },
+    --                 TelescopePromptTitle = { fg = palette.sumiInk4, bg = palette.sakuraPink },
+    --             }
+    --         end,
+    --     },
+    --     config = function(_, opts)
+    --         require("kanagawa").setup(opts)
+    --         vim.cmd.colorscheme("kanagawa")
+    --     end,
+    -- },
     --  +----------------------------------------------------------+
     --  |                       status line                        |
     --  +----------------------------------------------------------+
     {
         "ojroques/nvim-hardline",
-        --lazy = false, -- make sure we load this during startup if it is your main colorscheme
+        lazy = false,    -- make sure we load this during startup if it is your main colorscheme
         priority = 1000, -- make sure to load this before all the other start plugins
         config = function()
             require("hardline").setup({
@@ -108,7 +125,71 @@ return {
             })
         end,
     },
-
+-- {
+--     "nvim-lualine/lualine.nvim",
+--         lazy=false,
+--         dependencies = "nvim-tree/nvim-web-devicons",
+--     opts = {
+--         options = {
+--             section_separators = { left = "", right = "" },
+--             component_separators = { left = "│", right = "│" },
+--             globalstatus = true,
+--         },
+--         sections = {
+--             lualine_a = { "mode" },
+--             lualine_b = {
+--                 "branch",
+--                 {
+--                     "diff",
+--                     symbols = {
+--                         added = " ",
+--                         modified = " ",
+--                         removed = " ",
+--                     },
+--                 },
+--                 {
+--                     "diagnostics",
+--                     symbols = {
+--                         error = " ",
+--                         warn = " ",
+--                         info = " ",
+--                         hint = " ",
+--                     },
+--                 },
+--             },
+--             lualine_c = {
+--                 {
+--                     "filetype",
+--                     icon_only = true,
+--                     padding = {
+--                         left = 1,
+--                         right = 0,
+--                     },
+--                     separator = {
+--                         right = "",
+--                     },
+--                 },
+--                 "filename",
+--             },
+--             lualine_x = {
+--                 function()
+--                     local count
+--                     if (vim.fn.mode()):lower() == "v" then
+--                         count = vim.fn.wordcount().visual_words
+--                     else
+--                         count = vim.fn.wordcount().words
+--                     end
+--                     return ("%sW"):format(count)
+--                 end,
+--             },
+--             lualine_y = { "progress" },
+--             lualine_z = { "location" },
+--         },
+--         extensions = {
+--             "nvim-tree",
+--         },
+--     },
+-- },
 
 
     --  +----------------------------------------------------------+
@@ -119,7 +200,7 @@ return {
         lazy = false,
         priority = 1000, -- make sure to load this before all the other start plugins
         keys = {
-            { "<leader>tt", "<cmd>TransparentToggle<cr>", mode = { "i", "n", "s" }, desc = "TransparentToggle" },
+            { "<leader>tc", "<cmd>TransparentToggle<cr>", mode = { "i", "n", "s" }, desc = "TransparentToggle" },
         },
         config = function()
             require("transparent").setup({
@@ -135,8 +216,8 @@ return {
                 },                   -- table: additional groups that should be cleared
                 exclude_groups = {
 
-                    "NormalFloat",   -- plugins which have float panel such as Lazy, Mason, LspInfo
-                }, -- table: groups you don't want to clear
+                    "NormalFloat", -- plugins which have float panel such as Lazy, Mason, LspInfo
+                },                 -- table: groups you don't want to clear
             })
         end
     },
@@ -165,7 +246,21 @@ return {
             })
         end,
     },
-
+    {
+        "lukas-reineke/indent-blankline.nvim",
+        event = "VeryLazy",
+        opts = {
+            show_end_of_line = true,
+            show_current_context = true,
+            show_current_context_start = true,
+            char = "┆",
+        },
+        init = function()
+            vim.opt.list = true
+            vim.opt.listchars:append("eol:↲")
+            vim.opt.listchars:append("trail:•")
+        end,
+    },
 
     --  +------------------------------------------------------------------------------+
     --  |                           Beautifull notification                            |

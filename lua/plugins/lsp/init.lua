@@ -5,11 +5,11 @@ return {
         event = { "BufReadPre", "BufNewFile" },
         dependencies = {
 
-            "williamboman/mason.nvim",                       --mason
-            "williamboman/mason-lspconfig.nvim",             -- connect lspconfig and mason
-            { "folke/neodev.nvim",  opts = {} },             -- better show help ,docs and completion
+            "williamboman/mason.nvim",                                --mason
+            "williamboman/mason-lspconfig.nvim",                      -- connect lspconfig and mason
+            { "folke/neodev.nvim",  opts = {} },                      -- better show help ,docs and completion
             { "folke/neoconf.nvim", cmd = "Neoconf", config = true }, --manage global and project-local settings.
-
+            "haringsrob/nvim_context_vt",
         },
         opts = {
             -- options for vim.diagnostic.config()

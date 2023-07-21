@@ -23,6 +23,8 @@ keymap("n", "Y", "y$") -- Yanking to the end of line
 keymap("n", "p", "p`[") -- Paste yank after, keep cursor position
 keymap("n", "P", "P`[") -- Paste yank before, keep cursor position
 
+
+
 -- Add undo break-points
 keymap("i", ",", ",<c-g>u")
 keymap("i", ".", ".<c-g>u")
@@ -50,6 +52,9 @@ keymap("n", "<leader><leader>", "<c-^>") -- Switch between 2 buffers
 keymap("n", "j", [[v:count ? 'j' : 'gj']], { noremap = true, expr = true })
 keymap("n", "k", [[v:count ? 'k' : 'gk']], { noremap = true, expr = true })
 
+-- Better escape using jk in insert and terminal mode
+keymap("i", "jj", "<ESC>")
+keymap("t", "jj", "<C-\\><C-n>")
 --split window
 keymap("n", "<C-g>", [[<Cmd>sp<CR>]])
 keymap("n", "<C-b>", [[<Cmd>vsp<CR>]])
