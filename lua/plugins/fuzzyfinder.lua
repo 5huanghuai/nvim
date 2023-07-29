@@ -74,15 +74,15 @@ return {
                     return
                 end
             end
-            -- telescope.load_extension("file_browser")
-            -- telescope.load_extension("frecency")
-            -- telescope.load_extension("smart_history")
-            -- telescope.load_extension("live_grep_args")
-            -- telescope.load_extension("advanced_git_search")
-            -- telescope.load_extension("lazy")
-            -- telescope.load_extension("heading")
-            -- telescope.load_extension("session-lens")
-            -- telescope.load_extension('telescope-alternate')
+            telescope.load_extension("file_browser")
+            telescope.load_extension("frecency")
+            telescope.load_extension("smart_history")
+            telescope.load_extension("live_grep_args")
+            telescope.load_extension("advanced_git_search")
+            telescope.load_extension("lazy")
+            telescope.load_extension("heading")
+            telescope.load_extension("session-lens")
+            telescope.load_extension('telescope-alternate')
             telescope.setup({
                 defaults = {
                     sorting_strategy = "ascending", --排序方式 升序
@@ -151,25 +151,7 @@ return {
                             git_flags = {},
                             git_diff_flags = {},
                         },
-                        ["telescope-alternate"] = {
-                            mappings = {
-                                {
-                                    pattern = 'app/services/(.*)_services/(.*).rb',
-                                    targets = {
-                                        { template = 'app/contracts/[1]_contracts/[2].rb', label = 'Contract',
-                                            enable_new = true }                                       -- enable_new can be a function too.
-                                    }
-                                },
-                                {
-                                    pattern = 'app/contracts/(.*)_contracts/(.*).rb',
-                                    targets = {
-                                        { template = 'app/services/[1]_services/[2].rb', label = 'Service', enable_new = true }
-                                    }
-                                },
-                            },
-                            presets = { 'rails', 'nestjs' }
-                        },
-
+                    
                     },
             })
 
@@ -186,6 +168,34 @@ return {
         end,
 
     },
-
+      -- navigate between files that are related using regexp pattern
+    -- 类似与在备份文件和源文件之间切换
+  {
+    "otavioschwanck/telescope-alternate" ,
+    config = function()
+      require('telescope-alternate').setup({
+        presets = { 'rails', 'rspec', },
+        mappings = {
+          -- jihulab rails
+          { 'jh/app/models/(.*).rb', {
+            { 'jh/app/controllers/**/*[1:pluralize]_controller.rb', 'JH Controller' },
+            { 'jh/app/views/[1:pluralize]/*.html.haml', 'JH View' },
+            { 'jh/app/helpers/[1]_helper.rb', 'JH Helper' },
+          } },
+          { 'jh/app/controllers(.*)/(.*)_controller.rb', {
+            { 'jh/app/models/**/*[2:singularize].rb', 'JH Model' },
+            { 'jh/app/views/[1][2]/*.html.haml', 'JH View' },
+            { 'jh/app/helpers/**/*[2]_helper.rb', 'JH Helper' },
+          } },
+          -- jihulab rspec
+          { 'jh/app/(.*).rb', { { 'jh/spec/[1]_spec.rb', 'JH Test' } } },
+          { 'jh/spec/(.*)_spec.rb', { { 'jh/app/[1].rb', 'JH Original', true } } },
+          { 'jh/app/controllers/(.*)_controller.rb', { { 'jh/spec/requests/[1]_spec.rb', 'JH Request Test' } } },
+          { 'jh/spec/requests/(.*)_spec.rb', { { 'jh/app/controllers/[1]_controller.rb', 'JH Original Controller', true } } },
+        },
+      })
+      -- require('telescope').load_extension('telescope-alternate')
+    end,
+  },
 
 }

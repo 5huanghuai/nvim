@@ -175,7 +175,7 @@ return {
                     n = { function() Util.toggle("relativenumber") end, "Toggle Line Numbers", },
                     d = { function() Util.toggle_diagnostics() end, "Toggle Diagnostics", },
                     c = { "<cmd>TransparentToggle<cr>", "TransparentToggle" },
-                    l = { function() require("flash").toggle() end, "Toggle Flash Search" },
+                    a = { function() require("flash").toggle() end, "Toggle Flash Search" },
                 },
 
                 w = {
