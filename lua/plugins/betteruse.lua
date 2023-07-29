@@ -34,8 +34,38 @@ return {
             -- require(copilot.vim).setup()
         end
     },
-
-
+    -- A code outline window for skimming and quick navigation
+    {
+        "stevearc/aerial.nvim",
+        --       event = "User AstroFile",
+        event = "VeryLazy",
+        opts = {
+            attach_mode = "global",
+            backends = { "lsp", "treesitter", "markdown", "man" },
+            layout = { min_width = 28 },
+            show_guides = true,
+            filter_kind = false,
+            autojump = true,
+            guides = {
+                mid_item = "├ ",
+                last_item = "└ ",
+                nested_top = "│ ",
+                whitespace = "  ",
+            },
+        },
+        config = function()
+            require('aerial').setup({
+                -- optionally use on_attach to set keymaps when aerial has attached to a buffer
+                on_attach = function(bufnr)
+                    -- Jump forwards/backwards with '{' and '}'
+                    vim.keymap.set('n', '{', '<cmd>AerialPrev<CR>', { buffer = bufnr })
+                    vim.keymap.set('n', '}', '<cmd>AerialNext<CR>', { buffer = bufnr })
+                end
+            })
+            -- You probably also want to set a keymap to toggle aerial
+            vim.keymap.set('n', '<leader>O', '<cmd>AerialToggle!<CR>')
+        end
+    },
     --  +----------------------------------------------------------+
     --  |                      better comment                      |
     --  +----------------------------------------------------------+
@@ -90,6 +120,7 @@ return {
         keys = {
             { "]t",         function() require("todo-comments").jump_next() end, desc = "Next todo comment", },
             { "[t",         function() require("todo-comments").jump_prev() end, desc = "Previous todo comment", },
+
             { "<leader>xt", "<cmd>TodoTrouble<cr>",                              desc = "Todo (Trouble)" },
             { "<leader>xT", "<cmd>TodoTrouble keywords=TODO,FIX,FIXME<cr>",      desc = "Todo/Fix/Fixme (Trouble)" },
             { "<leader>fT", "<cmd>TodoTelescope<cr>",                            desc = "Find Todo" },
@@ -103,50 +134,76 @@ return {
     },
 
     -- better jump
-    {
-        "folke/flash.nvim",
-        -- event = "VeryLazy",
-        ---@type Flash.Config
-        opts = {},
-        -- stylua: ignore
-        keys = {
-            {
-                "<leader>s",
-                mode = { "n", "x", "o" },
-                function() require("flash").jump() end,
-                desc =
-                "Flash"
-            },
-            {
-                "<leader>S",
-                mode = { "n", "o", "x" },
-                function() require("flash").treesitter() end,
-                desc =
-                "Flash Treesitter"
-            },
-            {
-                "<leader>r",
-                mode = "o",
-                function() require("flash").remote() end,
-                desc =
-                "Remote Flash"
-            },
-            {
-                "<leader>R",
-                mode = { "o", "x" },
-                function() require("flash").treesitter_search() end,
-                desc =
-                "Treesitter Search"
-            },
-            {
-                "<leader>tf",
-                mode = { "n", "v", "x", "o", "c" },
-                function() require("flash").toggle() end,
-                desc =
-                "Toggle Flash Search"
-            },
+      -- Navigate your code with search labels, enhanced character motions and Treesitter integration
+  {
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    vscode = true,
+    opts = {
+      modes = {
+        search = {
+          enabled = false,
         },
+        char = {
+          enabled = true,
+          keys = { "f", "F" },
+          search = { wrap = false },
+          highlight = { backdrop = true },
+          jump = { register = false },
+        },
+      },
     },
+    keys = {
+      { "<leader>jj", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash", },
+      { "<leader>jt", mode = { "n", "o", "x" }, function() require("flash").treesitter() end, desc = "Flash Treesitter", },
+      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search", },
+      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash", },
+    },
+  },
+    -- {
+    --     "folke/flash.nvim",
+    --     -- event = "VeryLazy",
+    --     ---@type Flash.Config
+    --     opts = {},
+    --     -- stylua: ignore
+    --     keys = {
+    --         {
+    --             "<leader>s",
+    --             mode = { "n", "x", "o" },
+    --             function() require("flash").jump() end,
+    --             desc =
+    --             "Flash"
+    --         },
+    --         {
+    --             "<leader>S",
+    --             mode = { "n", "o", "x" },
+    --             function() require("flash").treesitter() end,
+    --             desc =
+    --             "Flash Treesitter"
+    --         },
+    --         {
+    --             "<leader>r",
+    --             mode = "o",
+    --             function() require("flash").remote() end,
+    --             desc =
+    --             "Remote Flash"
+    --         },
+    --         {
+    --             "<leader>R",
+    --             mode = { "o", "x" },
+    --             function() require("flash").treesitter_search() end,
+    --             desc =
+    --             "Treesitter Search"
+    --         },
+    --         {
+    --             "<leader>ul",
+    --             mode = { "c" },
+    --             function() require("flash").toggle() end,
+    --             desc =
+    --             "Toggle Flash Search"
+    --         },
+    --     },
+    -- },
 
 
 

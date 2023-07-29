@@ -48,6 +48,8 @@ keymap({ "n", "v", "o" }, "K", "8k", { desc = "8 k" })
 
 -- keymap("n", "<A-Tab>", "<c-^>") -- Switch between 2 buffers
 keymap("n", "<leader><leader>", "<c-^>") -- Switch between 2 buffers
+keymap("n", "<leader>m", ":bp<CR>",{desc="previous buffer"}) -- change to previous buffers
+keymap("n", "<leader>n", ":bn<CR>",{desc="next buffer"}) -- change to next buffers
 -- dealing with word wrap
 keymap("n", "j", [[v:count ? 'j' : 'gj']], { noremap = true, expr = true })
 keymap("n", "k", [[v:count ? 'k' : 'gk']], { noremap = true, expr = true })
@@ -66,10 +68,12 @@ keymap("n", "<A-k>", "<C-w>k")
 keymap("n", "<A-l>", "<C-w>l")
 
 -- Resize window using <shift> arrow keys
-keymap("n", "<A-Up>", "<cmd>resize +2<CR>")
-keymap("n", "<A-Down>", "<cmd>resize -2<CR>")
-keymap("n", "<A-Left>", "<cmd>vertical resize -2<CR>")
-keymap("n", "<A-Right>", "<cmd>vertical resize +2<CR>")
+-- keymap("n", "<A-Up>", "<C-w>+")
+-- keymap("n", "<A-Down>", "<C-w>-")
+keymap('n', '<C-A-Up>', '<C-w>+')
+keymap('n', '<C-A-Down>', '<C-w>-')
+keymap("n", "<C-A-Left>", "<C-w><")
+keymap("n", "<C-A-Right>", "<C-w>>")
 
 -- Toggle diff buffers
 keymap("n", "<leader>dft", "&diff ? ':windo diffoff<cr>' : ':windo diffthis<cr>'", { expr = true })

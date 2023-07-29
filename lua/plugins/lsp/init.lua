@@ -211,7 +211,7 @@ return {
         build = ":MasonUpdate", -- :MasonUpdate updates registry contents
 
         cmd = "Mason",
-        keys = { { "<leader>cm", "<cmd>Mason<cr>", desc = "Mason" } },
+        keys = { { "<leader>M", "<cmd>Mason<cr>", desc = "Mason" } },
 
         opts = {
             ensure_installed = {

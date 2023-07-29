@@ -18,18 +18,19 @@ return {
             "tsakirist/telescope-lazy.nvim",                --Telescope extension that provides handy functionality about plugins installed via lazy.nvim.
             "crispgm/telescope-heading.nvim",               --it's useful to markdown, An extension for telescope.nvim that allows you to switch between document's headings.
             "kkharji/sqlite.lua",                           --SQLite/LuaJIT binding and a highly opinionated wrapper for storing, retrieving, caching, and persisting SQLite databases
-            {
-                "rmagatti/auto-session",                    -- Auto Session takes advantage of Neovim's existing session management capabilities to provide seamless automatic session management
-                dependencies = { "rmagatti/session-lens" },
-                config = function()
-                    require("session-lens").setup({})
-                    require("auto-session").setup({
-                        auto_session_root_dir = vim.fn.stdpath("config") .. "/sessions/",
-                        auto_session_enabled = false,
-                        auto_session_use_git_branch = true,
-                    })
-                end,
-            },
+            "otavioschwanck/telescope-alternate",           --An extension for telescope.nvim that allows you to switch between projects.
+                 {
+        "rmagatti/auto-session", -- Auto Session takes advantage of Neovim's existing session management capabilities to provide seamless automatic session management
+        event = { "BufReadPre", "BufNewFile" },
+        config = function()
+          require("auto-session").setup({
+            auto_session_root_dir = vim.fn.stdpath("config") .. "/sessions/",
+            auto_session_enabled = true,
+            auto_session_enable_last_session = false,
+            auto_session_use_git_branch = true,
+          })
+        end,
+      },            { "rmagatti/session-lens",                   event = { "BufReadPre", "BufNewFile" }, config = true },
         },
         keys = {
             { "<C-p>",      ":Telescope find_files<CR>",       desc = "find files" },
@@ -73,14 +74,15 @@ return {
                     return
                 end
             end
-            telescope.load_extension("file_browser")
-            telescope.load_extension("frecency")
-            telescope.load_extension("smart_history")
-            telescope.load_extension("live_grep_args")
-            telescope.load_extension("advanced_git_search")
-            telescope.load_extension("lazy")
-            telescope.load_extension("heading")
-            telescope.load_extension("session-lens")
+            -- telescope.load_extension("file_browser")
+            -- telescope.load_extension("frecency")
+            -- telescope.load_extension("smart_history")
+            -- telescope.load_extension("live_grep_args")
+            -- telescope.load_extension("advanced_git_search")
+            -- telescope.load_extension("lazy")
+            -- telescope.load_extension("heading")
+            -- telescope.load_extension("session-lens")
+            -- telescope.load_extension('telescope-alternate')
             telescope.setup({
                 defaults = {
                     sorting_strategy = "ascending", --排序方式 升序
@@ -115,52 +117,75 @@ return {
                         },
                     },
                 },
-                extensions = {
-                    fzf = {
-                        case_mode = "smart_case",
-                        fuzzy = true,
-                        override_file_sorter = true,
-                        override_generic_sorter = true,
-                    },
-                    file_browser = {
-                        theme = "ivy",
-                        hijack_netrw = true,
-                    },
-                    frecency = {
-                        default_workspace = 'CWD',
-                        show_unindexed = false,
-                        ignore_patterns = { '*.git/*', '*node_modules/*', '*vendor/*' },
-                    },
+                    extensions = {
+                        fzf = {
+                            case_mode = "smart_case",
+                            fuzzy = true,
+                            override_file_sorter = true,
+                            override_generic_sorter = true,
+                        },
+                        file_browser = {
+                            theme = "ivy",
+                            hijack_netrw = true,
+                        },
+                        frecency = {
+                            default_workspace = 'CWD',
+                            show_unindexed = false,
+                            ignore_patterns = { '*.git/*', '*node_modules/*', '*vendor/*' },
+                        },
 
-                    live_grep_args = {
-                        auto_quoting = true,
-                        mappings = {
-                            i = {
-                                ["<C-e>"] = lga_actions.quote_prompt(),
-                                ["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
-                                ["<C-t>"] = lga_actions.quote_prompt({ postfix = " -t" }),
-                                ["<C-h>"] = lga_actions.quote_prompt({ postfix = " -truby lib app ee jh -g '!spec/'" }),
+                        live_grep_args = {
+                            auto_quoting = true,
+                            mappings = {
+                                i = {
+                                    ["<C-e>"] = lga_actions.quote_prompt(),
+                                    ["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
+                                    ["<C-t>"] = lga_actions.quote_prompt({ postfix = " -t" }),
+                                    ["<C-h>"] = lga_actions.quote_prompt({ postfix = " -truby lib app ee jh -g '!spec/'" }),
+                                },
                             },
                         },
+                        advanced_git_search = {
+                            diff_plugin = "fugitive",
+                            show_builtin_git_pickers = false,
+                            git_flags = {},
+                            git_diff_flags = {},
+                        },
+                        ["telescope-alternate"] = {
+                            mappings = {
+                                {
+                                    pattern = 'app/services/(.*)_services/(.*).rb',
+                                    targets = {
+                                        { template = 'app/contracts/[1]_contracts/[2].rb', label = 'Contract',
+                                            enable_new = true }                                       -- enable_new can be a function too.
+                                    }
+                                },
+                                {
+                                    pattern = 'app/contracts/(.*)_contracts/(.*).rb',
+                                    targets = {
+                                        { template = 'app/services/[1]_services/[2].rb', label = 'Service', enable_new = true }
+                                    }
+                                },
+                            },
+                            presets = { 'rails', 'nestjs' }
+                        },
+
                     },
-                    advanced_git_search = {
-                        diff_plugin = "fugitive",
-                        show_builtin_git_pickers = false,
-                        git_flags = {},
-                        git_diff_flags = {},
-                    }
-
-
-                },
             })
+
             vim.api.nvim_create_user_command(
                 "DiffCommitLine",
                 "lua require('telescope').extensions.advanced_git_search.diff_commit_line()",
                 { range = true }
             )
             vim.api.nvim_set_keymap("v", "<leader>gl", ":DiffCommitLine<CR>", { noremap = true })
-        end
+
+            vim.api.nvim_set_keymap("n", "g]", ":lua require('telescope').extensions.ctags_plus.jump_to_tag()<CR>",
+                { noremap = true })
+            vim.api.nvim_set_keymap("n", "<leader>o", ":Telescope ctags_outline outline<CR>", { noremap = true })
+        end,
 
     },
+
 
 }

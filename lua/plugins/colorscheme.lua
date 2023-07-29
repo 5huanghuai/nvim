@@ -1,4 +1,6 @@
 return {
+ 
+  { "nvim-tree/nvim-web-devicons", lazy = false },
     --  +----------------------------------------------------------+
     --  |                          theme                           |
     --  +----------------------------------------------------------+
@@ -88,108 +90,155 @@ return {
     --  +----------------------------------------------------------+
     --  |                       status line                        |
     --  +----------------------------------------------------------+
-    {
-        "ojroques/nvim-hardline",
-        lazy = false,    -- make sure we load this during startup if it is your main colorscheme
-        priority = 1000, -- make sure to load this before all the other start plugins
-        config = function()
-            require("hardline").setup({
-                bufferline = true,            -- disable bufferline
-                bufferline_settings = {
-                    exclude_terminal = false, -- don't show terminal buffers in bufferline
-                    show_index = false,       -- show buffer indexes (not the actual buffer numbers) in bufferline
-                },
-                theme = "gruvbox",            -- change theme
-                sections = {                  -- define sections
-                    { class = "mode",   item = require("hardline.parts.mode").get_item },
-                    -- , hide = 100
-                    { class = "branch", item = require("hardline.parts.git").get_item },
-                    { class = "med",    item = require("hardline.parts.filename").get_item },
-                    -- hide = 60
-                    "%<",
-                    { class = "med",     item = "%=" },
-                    { class = "high",    item = require("hardline.parts.filetype").get_item },
+    -- {
+    --     "ojroques/nvim-hardline",
+    --     lazy = false,    -- make sure we load this during startup if it is your main colorscheme
+    --     priority = 1000, -- make sure to load this before all the other start plugins
+    --     config = function()
+    --         require("hardline").setup({
+    --             bufferline = true,            -- disable bufferline
+    --             bufferline_settings = {
+    --                 exclude_terminal = true, -- don't show terminal buffers in bufferline
+    --                 show_index = true,       -- show buffer indexes (not the actual buffer numbers) in bufferline
+    --             },
+    --             theme = "gruvbox",            -- change theme
+    --             sections = {                  -- define sections
+    --                 { class = "mode",   item = require("hardline.parts.mode").get_item },
+    --                 -- , hide = 100
+    --                 { class = "branch", item = require("hardline.parts.git").get_item },
+    --                 { class = "med",    item = require("hardline.parts.filename").get_item },
+    --                 -- hide = 60
+    --                 "%<",
+    --                 { class = "med",     item = "%=" },
+    --                 { class = "high",    item = require("hardline.parts.filetype").get_item },
+    --
+    --                 -- { class = "low", item = require("hardline.parts.wordcount").get_item, hide = 100 },
+    --                 { class = "error",   item = require("hardline.parts.lsp").get_error },
+    --                 { class = "warning", item = require("hardline.parts.lsp").get_warning },
+    --                 --{ class = "med", item = require("hardline.parts.whitespace").get_item },
+    --                 { class = "med",     item = require("hardline.parts.line").get_item },
+    --                 {
+    --                     class = "low",
+    --                     item = function()
+    --                         return " " .. os.date("%R")
+    --                     end,
+    --                 },
+    --             },
+    --         })
+    --     end,
+    -- },
+      -- beautiful buffer line bar
+  {
+    "akinsho/nvim-bufferline.lua",
+    event = "VeryLazy",
+    keys = {
+      { "<leader>bp", "<Cmd>BufferLineTogglePin<CR>", desc = "Toggle pin" },
+      { "<leader>bP", "<Cmd>BufferLineGroupClose ungrouped<CR>", desc = "Delete non-pinned buffers" },
+    },
+    opts = {
+      options = {
+        mode = "buffers", -- tabs or buffers
+        numbers = "buffer_id",
+        diagnostics = "nvim_lsp",
+        always_show_bufferline = false,
+        separator_style = "slant" or "padded_slant",
+        show_tab_indicators = true,
+        show_buffer_close_icons = false,
+        show_close_icon = false,
+        color_icons = true,
+        enforce_regular_tabs = false,
+        custom_filter = function(buf_number, _)
+          local tab_num = 0
+          for _ in pairs(vim.api.nvim_list_tabpages()) do
+            tab_num = tab_num + 1
+          end
 
-                    -- { class = "low", item = require("hardline.parts.wordcount").get_item, hide = 100 },
-                    { class = "error",   item = require("hardline.parts.lsp").get_error },
-                    { class = "warning", item = require("hardline.parts.lsp").get_warning },
-                    --{ class = "med", item = require("hardline.parts.whitespace").get_item },
-                    { class = "med",     item = require("hardline.parts.line").get_item },
-                    {
-                        class = "low",
-                        item = function()
-                            return " " .. os.date("%R")
-                        end,
+          if tab_num > 1 then
+            if not not vim.api.nvim_buf_get_name(buf_number):find(vim.fn.getcwd(), 0, true) then
+              return true
+            end
+          else
+            return true
+          end
+        end,
+        sort_by = function(buffer_a, buffer_b)
+          local mod_a = ((vim.loop.fs_stat(buffer_a.path) or {}).mtime or {}).sec or 0
+          local mod_b = ((vim.loop.fs_stat(buffer_b.path) or {}).mtime or {}).sec or 0
+          return mod_a > mod_b
+        end,
+      },
+    },
+    config=function ()
+        vim.opt.termguicolors = true
+require("bufferline").setup{}
+    end
+  },
+
+{
+    "nvim-lualine/lualine.nvim",
+        lazy=false,
+        dependencies = "nvim-tree/nvim-web-devicons",
+    opts = {
+        options = {
+            section_separators = { left = "", right = "" },
+            component_separators = { left = "│", right = "│" },
+            globalstatus = true,
+        },
+        sections = {
+            lualine_a = { "mode" },
+            lualine_b = {
+                "branch",
+                {
+                    "diff",
+                    symbols = {
+                        added = " ",
+                        modified = " ",
+                        removed = " ",
                     },
                 },
-            })
-        end,
+                {
+                    "diagnostics",
+                    symbols = {
+                        error = " ",
+                        warn = " ",
+                        info = " ",
+                        hint = " ",
+                    },
+                },
+            },
+            lualine_c = {
+                {
+                    "filetype",
+                    icon_only = true,
+                    padding = {
+                        left = 1,
+                        right = 0,
+                    },
+                    separator = {
+                        right = "",
+                    },
+                },
+                "filename",
+            },
+            lualine_x = {
+                function()
+                    local count
+                    if (vim.fn.mode()):lower() == "v" then
+                        count = vim.fn.wordcount().visual_words
+                    else
+                        count = vim.fn.wordcount().words
+                    end
+                    return ("%sW"):format(count)
+                end,
+            },
+            lualine_y = { "progress" },
+            lualine_z = { "location" },
+        },
+        extensions = {
+            "nvim-tree",
+        },
     },
--- {
---     "nvim-lualine/lualine.nvim",
---         lazy=false,
---         dependencies = "nvim-tree/nvim-web-devicons",
---     opts = {
---         options = {
---             section_separators = { left = "", right = "" },
---             component_separators = { left = "│", right = "│" },
---             globalstatus = true,
---         },
---         sections = {
---             lualine_a = { "mode" },
---             lualine_b = {
---                 "branch",
---                 {
---                     "diff",
---                     symbols = {
---                         added = " ",
---                         modified = " ",
---                         removed = " ",
---                     },
---                 },
---                 {
---                     "diagnostics",
---                     symbols = {
---                         error = " ",
---                         warn = " ",
---                         info = " ",
---                         hint = " ",
---                     },
---                 },
---             },
---             lualine_c = {
---                 {
---                     "filetype",
---                     icon_only = true,
---                     padding = {
---                         left = 1,
---                         right = 0,
---                     },
---                     separator = {
---                         right = "",
---                     },
---                 },
---                 "filename",
---             },
---             lualine_x = {
---                 function()
---                     local count
---                     if (vim.fn.mode()):lower() == "v" then
---                         count = vim.fn.wordcount().visual_words
---                     else
---                         count = vim.fn.wordcount().words
---                     end
---                     return ("%sW"):format(count)
---                 end,
---             },
---             lualine_y = { "progress" },
---             lualine_z = { "location" },
---         },
---         extensions = {
---             "nvim-tree",
---         },
---     },
--- },
+},
 
 
     --  +----------------------------------------------------------+
@@ -200,7 +249,7 @@ return {
         lazy = false,
         priority = 1000, -- make sure to load this before all the other start plugins
         keys = {
-            { "<leader>tc", "<cmd>TransparentToggle<cr>", mode = { "i", "n", "s" }, desc = "TransparentToggle" },
+            { "<leader>uc", "<cmd>TransparentToggle<cr>", mode = { "i", "n", "s" }, desc = "TransparentToggle" },
         },
         config = function()
             require("transparent").setup({
@@ -429,5 +478,38 @@ return {
             })
         end
     },
-
+  -- better vim.ui
+  {
+    "stevearc/dressing.nvim",
+    lazy = true,
+    init = function()
+      ---@diagnostic disable-next-line: duplicate-set-field
+      vim.ui.select = function(...)
+        require("lazy").load({ plugins = { "dressing.nvim" } })
+        return vim.ui.select(...)
+      end
+      ---@diagnostic disable-next-line: duplicate-set-field
+      vim.ui.input = function(...)
+        require("lazy").load({ plugins = { "dressing.nvim" } })
+        return vim.ui.input(...)
+      end
+    end,
+  },
+     -- high-performance color highlighter
+  {
+    "norcalli/nvim-colorizer.lua",
+    event = "VeryLazy",
+    config = function()
+      require("colorizer").setup({ "css", "scss", "erb", "html", "javascript" }, {
+        RGB = true, -- #RGB hex codes
+        RRGGBB = true, -- #RRGGBB hex codes
+        names = true, -- "Name" codes like Blue
+        RRGGBBAA = true, -- #RRGGBBAA hex codes
+        rgb_fn = true, -- CSS rgb() and rgba() functions
+        hsl_fn = true, -- CSS hsl() and hsla() functions
+        css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+        css_fn = true, -- Enable all CSS *functions*: rgb_fn, hsl_fn
+      })
+    end,
+  },
 }
